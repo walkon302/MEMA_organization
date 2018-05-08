@@ -3,49 +3,63 @@ import model
 import sys, os
 
 def main():
-    print '---------------------------------------------'
-    print 'Load image, black_white them, and resize them'
-    print '---------------------------------------------'
+    mode = sys.argv[1]
 
-    dp.ImagePreprocess.image_bw(old_image_folder='ori_organized')
-    dp.ImagePreprocess.image_bw(old_image_folder='ori_disorganized')
+    if mode == 'predict':
+        print '---------------------------------------------'
+        print 'Predicting new images'
+        print '---------------------------------------------'
 
-    dp.ImagePreprocess.image_resize(old_image_folder='bw_ori_organized')
-    dp.ImagePreprocess.image_resize(old_image_folder='bw_ori_disorganized')
+        pred_array, pred_file = dp.DataPreProcess.predict_prep('predict')
+        pred_pre = dp.DataPreProcess.preprocess(pred_array)
+        pred_result = model.pred_model(pred_pre)
 
-    print '---------------------------------------------'
-    print 'Convert images to numpy array'
-    print '---------------------------------------------'
+        model.prediction(pred_result, pred_file)
 
-    good_re, bad_re = (
-    dp.DataPreProcess.data_prepared('resize_bw_ori_organized',
-                                    'resize_bw_ori_disorganized'))
+    else:
 
-    good_pre = dp.DataPreProcess.preprocess(good_re)
-    bad_pre = dp.DataPreProcess.preprocess(bad_re)
+        print '---------------------------------------------'
+        print 'Load image, black_white them, and resize them'
+        print '---------------------------------------------'
 
-    print '---------------------------------------------'
-    print 'Train, eval, test sample split'
-    print '---------------------------------------------'
+        dp.ImagePreprocess.image_bw(old_image_folder='ori_organized')
+        dp.ImagePreprocess.image_bw(old_image_folder='ori_disorganized')
 
-    train_sample, train_label, eval_sample, eval_label = (
-    dp.DataPreProcess.data_generate(good_pre, bad_pre, 150))
+        dp.ImagePreprocess.image_resize(old_image_folder='bw_ori_organized')
+        dp.ImagePreprocess.image_resize(old_image_folder='bw_ori_disorganized')
 
-    print '---------------------------------------------'
-    print 'Train model'
-    print '---------------------------------------------'
+        print '---------------------------------------------'
+        print 'Convert images to numpy array'
+        print '---------------------------------------------'
 
-    mema_classifier = model.train_model(train_sample, train_label)
+        good_re = dp.DataPreProcess.data_prepared('resize_bw_ori_organized')
+        bad_re = dp.DataPreProcess.data_prepared('resize_bw_ori_disorganized')
 
-    print '---------------------------------------------'
-    print 'Evaluate model'
-    print '---------------------------------------------'
+        good_pre = dp.DataPreProcess.preprocess(good_re)
+        bad_pre = dp.DataPreProcess.preprocess(bad_re)
 
-    result = model.eval_model(eval_sample, eval_label, mema_classifier)
+        print '---------------------------------------------'
+        print 'Train, eval, test sample split'
+        print '---------------------------------------------'
 
-    print '---------------------------------------------'
-    print 'Evaluation Accuracy'
-    print '---------------------------------------------'
-    print result
+        train_sample, train_label, eval_sample, eval_label = (
+        dp.DataPreProcess.data_generate(good_pre, bad_pre, 150))
+
+        if mode == 'train':
+            print '---------------------------------------------'
+            print 'Train model'
+            print '---------------------------------------------'
+
+            model.train_model(train_sample, train_label)
+
+        if mode == 'eval':
+            print '---------------------------------------------'
+            print 'Evaluate model'
+            print '---------------------------------------------'
+            print '---------------------------------------------'
+            print 'Evaluation Accuracy'
+            print '---------------------------------------------'
+            print model.eval_model(eval_sample, eval_label)
+
 if __name__ == '__main__':
     main()

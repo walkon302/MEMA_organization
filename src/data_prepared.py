@@ -138,27 +138,21 @@ class ImageAugementation(object):
 class DataPreProcess(object):
 
     @staticmethod
-    def data_prepared(organized, disorganized):
+    def data_prepared(folder):
 
         cur_path = '{}/input'.format(os.path.dirname(os.getcwd()))
 
-        or_path = '{}/{}'.format(cur_path, organized)
-        dis_path = '{}/{}'.format(cur_path, disorganized)
+        work_path = '{}/{}'.format(cur_path, folder)
 
+        file_list = glob.glob('{}/*'.format(work_path))
 
-        good_list = glob.glob('{}/*'.format(or_path))
-        bad_list = glob.glob('{}/*'.format(dis_path))
+        image_array = ImageAugementation.image_to_array(file_list)
 
-        good_array = ImageAugementation.image_to_array(good_list)
-        bad_array = ImageAugementation.image_to_array(bad_list)
+        image_array_aug = ImageAugementation.image_augmentation(image_array)
 
-        good = ImageAugementation.image_augmentation(good_array)
-        bad = ImageAugementation.image_augmentation(bad_array)
+        image_array_aug_resize = ImageAugementation.image_resize(image_array_aug)
 
-        good_re = ImageAugementation.image_resize(good)
-        bad_re = ImageAugementation.image_resize(bad)
-
-        return good_re, bad_re
+        return image_array_aug_resize
 
     @staticmethod
     def preprocess(np_array):
@@ -185,3 +179,21 @@ class DataPreProcess(object):
                                           random_state=0)
 
         return train_sample, train_label, eval_sample, eval_label
+
+    @staticmethod
+    def predict_prep(folder='predict'):
+
+        ImagePreprocess.image_bw(old_image_folder=folder)
+        ImagePreprocess.image_resize(old_image_folder='bw_predict')
+
+        cur_path = '{}/input'.format(os.path.dirname(os.getcwd()))
+        work_path = '{}/{}'.format(cur_path, 'resize_bw_predict')
+        file_list = glob.glob('{}/*'.format(work_path))
+        image_array = ImageAugementation.image_to_array(file_list)
+        image_array_resize = ImageAugementation.image_resize(image_array)
+
+        file_name = []
+        for f in file_list:
+            file_name.append(os.path.basename(f))
+        file_name = np.array(file_name)
+        return image_array_resize, file_name

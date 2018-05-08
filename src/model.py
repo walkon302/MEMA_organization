@@ -1,5 +1,8 @@
 import numpy as np
 import tensorflow as tf
+import csv
+import os
+
 from matplotlib import pyplot as plt
 
 tf.logging.set_verbosity(tf.logging.INFO)
@@ -91,12 +94,15 @@ def train_model(train_sample, train_label):
 
     mema_classifier.train(
         input_fn=train_input_fn,
-        steps=10000,
+        steps=10,
         hooks=[logging_hook])
 
-    return mema_classifier
+def eval_model(eval_sample, eval_label):
 
-def eval_model(eval_sample, eval_label, mema_classifier):
+    mema_classifier = tf.estimator.Estimator(
+        model_fn=cnn_model_fn,
+        model_dir="/Users/Walkon302/Desktop/MEMA_organization/MEMA_model")
+
     eval_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": eval_sample},
         y=eval_label,
@@ -104,3 +110,36 @@ def eval_model(eval_sample, eval_label, mema_classifier):
         shuffle=False)
 
     return mema_classifier.evaluate(input_fn=eval_input_fn)
+
+def pred_model(pred_sample):
+
+    mema_classifier = tf.estimator.Estimator(
+        model_fn=cnn_model_fn,
+        model_dir="/Users/Walkon302/Desktop/MEMA_organization/MEMA_model")
+
+    pred_input_fn = tf.estimator.inputs.numpy_input_fn(
+        x={"x": pred_sample},
+        num_epochs=1,
+        shuffle=False)
+
+    return mema_classifier.predict(input_fn=pred_input_fn)
+
+def prediction(prediction, file_name):
+    result = []
+    for pred, name in zip(prediction, file_name):
+        if pred['classes'] == 0:
+            result.append((name, 'organized'))
+        else:
+            result.append((name, 'disorganized'))
+
+    curdir = os.path.dirname(os.getcwd())
+    directory = '{}/output'.format(curdir)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    output_file = '{}/output.csv'.format(directory)
+
+    with open(output_file, "w") as output:
+        writer = csv.writer(output, lineterminator='\n')
+        for r in result:
+            writer.writerow([r])
