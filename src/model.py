@@ -3,8 +3,6 @@ import tensorflow as tf
 import csv
 import os
 
-from matplotlib import pyplot as plt
-
 tf.logging.set_verbosity(tf.logging.INFO)
 
 def cnn_model_fn(features, labels, mode):

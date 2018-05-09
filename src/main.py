@@ -4,7 +4,6 @@ import sys, os
 
 def main():
     mode = sys.argv[1]
-
     if mode == 'predict':
         print '---------------------------------------------'
         print 'Predicting new images'
