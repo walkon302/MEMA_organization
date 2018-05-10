@@ -21,10 +21,11 @@ After applying this method, we will be able to quicktly quantify the ratio of or
 
 * Open terminal, the following procedures are all in the terminal
 
-#### Type in the following commands in the terminal directly
+#### Install Anaconda
 * install anaconda https://repo.anaconda.com/archive/Anaconda2-5.1.0-MacOSX-x86_64.pkg  
 -- install the anaconda  
 
+#### Type in the following commands in the terminal directly
 * conda create -n mema python=2.7 anaconda  
 -- create a new virtual environment called mema for running the script without altering the original system  
 
@@ -46,20 +47,22 @@ After applying this method, we will be able to quicktly quantify the ratio of or
 -- enter the main folder of the script  
 
 * mkdir input  
--- generate a folder named input  
+-- generate a folder named, 'input'  
 
 * cd input  
--- enter the subfolder, input  
+-- enter the subfolder, 'input'  
 
-* mkdir ori_organized  
-* mkdir ori_disorganized  
-* mkdir predict
--- generate two folders, one is for organized, another one is for disorganized, the last one is for new images that need to be classified.  
+* mkdir train_organized  
+* mkdir train_disorganized    
+* mkdir eval_disorganized  
+* mkdir eval_disorganized  
+* mkdir predict  
+-- generate five folders, two for training, two for evaluation, the last one is for new images that need to be classified.  
 
 #### Then move images and model into this mema folder
-* Put images into ori_organized and ori_disorganized folders accordingly.  
+* Put images into those five folders accordingly.  
 * Put the images that need to be classified into predict folder.  
-* Put MEMA_model into main folder, mema.  
+* If there is pre-trained model, put that model in the mema folder.
 
 #### Type in the commands
 * cd..  
@@ -70,8 +73,8 @@ After applying this method, we will be able to quicktly quantify the ratio of or
 
 
 #### Ready to use, type in the commands.
-* python main.py train  
--- Train the model with images from ori_organized and ori_disorganized folders  
+* python main.py train 10000
+-- Train the model with images from train_organized and train_disorganized folders  for 10000 iterations.
 
 * python main.py eval  
 -- Evaluate the performace  
