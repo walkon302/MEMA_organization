@@ -26,7 +26,8 @@ def main():
 
             train_sample, train_label = (
             dp.DataPreProcess.train_eval_prep('train_organized',
-                                              'train_disorganized')
+                                              'train_disorganized',
+                                              'train')
             )
 
             print '---------------------------------------------'
@@ -39,7 +40,8 @@ def main():
 
             eval_sample, eval_label = (
             dp.DataPreProcess.train_eval_prep('eval_organized',
-                                              'eval_disorganized')
+                                              'eval_disorganized',
+                                              'eval')
             )
 
             print '---------------------------------------------'

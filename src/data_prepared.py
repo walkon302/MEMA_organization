@@ -247,6 +247,7 @@ class DataPreProcess(object):
         )
 
         if mode == 'train':
+
             good = (
             DataPreProcess.augmented_prepared('resize_bw_{}'.format(folder_1))
             )
@@ -254,6 +255,7 @@ class DataPreProcess(object):
             DataPreProcess.augmented_prepared('resize_bw_{}'.format(folder_2))
             )
         else:
+
             good = (
             DataPreProcess.normal_prepared('resize_bw_{}'.format(folder_1))
             )
@@ -277,7 +279,7 @@ class DataPreProcess(object):
         image_array_resize = (
         DataPreProcess.normal_prepared('resize_bw_{}'.format(folder))
         )
-        
+
         ImageAugementation.image_resize(image_array)
 
         file_name = []
