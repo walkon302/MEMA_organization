@@ -7,6 +7,9 @@ import math
 from sklearn.utils import shuffle
 
 class ImagePreprocess(object):
+    '''
+    Collections of methods for preprocessing the images.
+    '''
 
     @staticmethod
     def image_bw(old_image_folder='ori_organized',
@@ -15,6 +18,19 @@ class ImagePreprocess(object):
 
         """
         Load old RGB image and convert it to black and white.
+
+        Parameters:
+        -----------
+        old_image_folder: str
+            The name of folder containing training image.
+        new_image_folder: str
+            The name of folder for processed images.
+        file_type: str
+            The output file type
+
+        Return:
+        -------
+        Generate new folders containing black and white images.
         """
 
         curdir = os.path.dirname(os.getcwd())
@@ -43,10 +59,23 @@ class ImagePreprocess(object):
                      file_type='png'):
 
         """
-        Place one image on another image.
-
         Resize the canvas of old_image_path and store the new image in
         new_image_path. Center the image on the new canvas.
+
+        Parameters:
+        -----------
+        old_image_folder: str
+            The name of folder containing training image.
+        new_image_folder: str
+            The name of folder for processed images.
+        canvas_size: int
+            The pixel size of canvas.
+        file_type: str
+            The output file type
+
+        Returns:
+        --------
+            Generate new folders containing resized images.
         """
 
         curdir = os.path.dirname(os.getcwd())
@@ -90,11 +119,31 @@ class ImagePreprocess(object):
                                                  file_type)
 
 class ImageAugementation(object):
+    '''
+    Collections of methods for converting images into numpy array and
+    augmenting the training images.
+    '''
 
     @staticmethod
     def image_to_array(image_file_list):
-        return np.array([cv2.imread(file_name, 0)
+        '''
+        Convert images to numpy array.
+
+        Parameters:
+        -----------
+        image_file_list: list
+            The list of path of image files.
+
+        Returns:
+        --------
+        image_array: numpy array
+            A numpy array containing image information.
+        '''
+
+        image_array = np.array([cv2.imread(file_name, 0)
                         for file_name in image_file_list])
+
+        return image_array
 
     @staticmethod
     def image_rotation(image_array, degree=90):
