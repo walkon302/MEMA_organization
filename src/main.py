@@ -42,7 +42,7 @@ def main():
         print '---------------------------------------------'
 
         train_sample, train_label, eval_sample, eval_label = (
-        dp.DataPreProcess.data_generate(good_pre, bad_pre, 150))
+        dp.DataPreProcess.data_generate(good_pre, bad_pre, 2))
 
         if mode == 'train':
             print '---------------------------------------------'

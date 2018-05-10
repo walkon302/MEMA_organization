@@ -27,7 +27,7 @@ class ImagePreprocess(object):
 
         filelist = glob.glob('{}/input/{}/*.{}'.format(curdir,
                                                        old_image_folder,
-                                                       file_type))
+                                                       '*'))
 
         for file_name in filelist:
             im = Image.open(file_name)
@@ -59,7 +59,7 @@ class ImagePreprocess(object):
 
         filelist = glob.glob('{}/input/{}/*.{}'.format(curdir,
                                                        old_image_folder,
-                                                       file_type))
+                                                       '*'))
 
         for file_name in filelist:
             im = Image.open(file_name)
