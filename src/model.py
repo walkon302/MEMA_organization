@@ -73,7 +73,7 @@ def cnn_model_fn(features, labels, mode):
     return tf.estimator.EstimatorSpec(
       mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
-def train_model(train_sample, train_label):
+def train_model(train_sample, train_label, training_step):
 
     tensors_to_log = {"probabilities": "softmax_tensor"}
     logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log,
@@ -92,7 +92,7 @@ def train_model(train_sample, train_label):
 
     mema_classifier.train(
         input_fn=train_input_fn,
-        steps=10,
+        steps=training_step,
         hooks=[logging_hook])
 
 def eval_model(eval_sample, eval_label):

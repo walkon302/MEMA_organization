@@ -21,38 +21,34 @@ def main():
         print 'Load image, black_white them, and resize them'
         print '---------------------------------------------'
 
-        train_good, train_bad = (
-        dp.DataPreProcess.train_eval_prep('ori_organized',
-                                          'ori_disorganized')
-        )
-        
-        eval_good, eval_bad = (
-        dp.DataPreProcess.train_eval_prep('eval_organized',
-                                          'eval_disorganized')
-        )
-
-        train_sample, train_label = (
-        dp.DataPreProcess.data_generate(train_good, train_bad)
-        )
-
-        eval_sample, eval_label = (
-        dp.DataPreProcess.data_generate(eval_good, eval_bad)
-        )
-
         if mode == 'train':
+            training_step = int(sys.argv[2])
+
+            train_sample, train_label = (
+            dp.DataPreProcess.train_eval_prep('train_organized',
+                                              'train_disorganized')
+            )
+
             print '---------------------------------------------'
             print 'Train model'
             print '---------------------------------------------'
 
-            model.train_model(train_sample, train_label)
+            model.train_model(train_sample, train_label, training_step)
 
         if mode == 'eval':
+
+            eval_sample, eval_label = (
+            dp.DataPreProcess.train_eval_prep('eval_organized',
+                                              'eval_disorganized')
+            )
+
             print '---------------------------------------------'
             print 'Evaluate model'
             print '---------------------------------------------'
             print '---------------------------------------------'
             print 'Evaluation Accuracy'
             print '---------------------------------------------'
+
             print model.eval_model(eval_sample, eval_label)
 
 if __name__ == '__main__':
