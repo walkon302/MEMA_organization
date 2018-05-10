@@ -186,13 +186,17 @@ class ImageAugementation(object):
 class DataPreProcess(object):
 
     @staticmethod
+    def get_file_list(folder):
+        cur_path = '{}/input'.format(os.path.dirname(os.getcwd()))
+        work_path = '{}/{}'.format(cur_path, folder)
+        file_list = glob.glob('{}/*'.format(work_path))
+        
+        return file_list
+
+    @staticmethod
     def data_prepared(folder):
 
-        cur_path = '{}/input'.format(os.path.dirname(os.getcwd()))
-
-        work_path = '{}/{}'.format(cur_path, folder)
-
-        file_list = glob.glob('{}/*'.format(work_path))
+        file_list = DataPreProcess.get_file_list(folder)
 
         image_array = ImageAugementation.image_to_array(file_list)
 
@@ -211,24 +215,36 @@ class DataPreProcess(object):
 
     @staticmethod
     def data_generate(pos, neg):
-        final = min(len(pos), len(neg))
-        n = max(int(final * 0.2), 2)
 
-        train_sample = np.concatenate([pos[0:n], neg[0:n]])
-        eval_sample = np.concatenate([pos[n:final], neg[n:final]])
-        train_label = np.concatenate([np.repeat(0, n), np.repeat(1, n)])
-        eval_label = np.concatenate(
-        [np.repeat(0, final-n), np.repeat(1, final-n)]
-        )
+        train_sample = np.concatenate([pos, neg])
+        train_label = np.concatenate([np.repeat(0, len(pos)),
+                                      np.repeat(1, len(neg))])
 
         train_sample, train_label = shuffle(train_sample,
                                             train_label,
                                             random_state=0)
-        eval_sample, eval_label = shuffle(eval_sample,
-                                          eval_label,
-                                          random_state=0)
 
-        return train_sample, train_label, eval_sample, eval_label
+        return train_sample, train_label
+
+    @staticmethod
+    def train_eval_prep(folder_1='ori_organized',
+                        folder_2='ori_disorganized'):
+
+        ImagePreprocess.image_bw(old_image_folder = folder_1)
+        ImagePreprocess.image_bw(old_image_folder = folder_2)
+        ImagePreprocess.image_resize(
+        old_image_folder='bw_{}'.format(folder_1)
+        )
+        ImagePreprocess.image_resize(
+        old_image_folder='bw_{}'.format(folder_2)
+        )
+        good = DataPreProcess.data_prepared('resize_bw_{}'.format(folder_1))
+        bad = DataPreProcess.data_prepared('resize_bw_{}'.format(folder_2))
+
+        good_array = DataPreProcess.preprocess(good)
+        bad_array = DataPreProcess.preprocess(bad)
+
+        return good_array, bad_array
 
     @staticmethod
     def predict_prep(folder='predict'):
@@ -236,9 +252,7 @@ class DataPreProcess(object):
         ImagePreprocess.image_bw(old_image_folder=folder)
         ImagePreprocess.image_resize(old_image_folder='bw_predict')
 
-        cur_path = '{}/input'.format(os.path.dirname(os.getcwd()))
-        work_path = '{}/{}'.format(cur_path, 'resize_bw_predict')
-        file_list = glob.glob('{}/*'.format(work_path))
+        file_list = DataPreProcess.get_file_list('resize_bw_predict')
         image_array = ImageAugementation.image_to_array(file_list)
         image_array_resize = ImageAugementation.image_resize(image_array)
 

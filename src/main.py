@@ -21,28 +21,23 @@ def main():
         print 'Load image, black_white them, and resize them'
         print '---------------------------------------------'
 
-        dp.ImagePreprocess.image_bw(old_image_folder='ori_organized')
-        dp.ImagePreprocess.image_bw(old_image_folder='ori_disorganized')
+        train_good, train_bad = (
+        dp.DataPreProcess.train_eval_prep('ori_organized',
+                                          'ori_disorganized')
+        )
+        
+        eval_good, eval_bad = (
+        dp.DataPreProcess.train_eval_prep('eval_organized',
+                                          'eval_disorganized')
+        )
 
-        dp.ImagePreprocess.image_resize(old_image_folder='bw_ori_organized')
-        dp.ImagePreprocess.image_resize(old_image_folder='bw_ori_disorganized')
+        train_sample, train_label = (
+        dp.DataPreProcess.data_generate(train_good, train_bad)
+        )
 
-        print '---------------------------------------------'
-        print 'Convert images to numpy array'
-        print '---------------------------------------------'
-
-        good_re = dp.DataPreProcess.data_prepared('resize_bw_ori_organized')
-        bad_re = dp.DataPreProcess.data_prepared('resize_bw_ori_disorganized')
-
-        good_pre = dp.DataPreProcess.preprocess(good_re)
-        bad_pre = dp.DataPreProcess.preprocess(bad_re)
-
-        print '---------------------------------------------'
-        print 'Train, eval, test sample split'
-        print '---------------------------------------------'
-
-        train_sample, train_label, eval_sample, eval_label = (
-        dp.DataPreProcess.data_generate(good_pre, bad_pre))
+        eval_sample, eval_label = (
+        dp.DataPreProcess.data_generate(eval_good, eval_bad)
+        )
 
         if mode == 'train':
             print '---------------------------------------------'
