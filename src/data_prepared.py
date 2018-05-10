@@ -210,8 +210,10 @@ class DataPreProcess(object):
         return np_array
 
     @staticmethod
-    def data_generate(pos, neg, n):
+    def data_generate(pos, neg):
         final = min(len(pos), len(neg))
+        n = max(int(final * 0.2), 2)
+
         train_sample = np.concatenate([pos[0:n], neg[0:n]])
         eval_sample = np.concatenate([pos[n:final], neg[n:final]])
         train_label = np.concatenate([np.repeat(0, n), np.repeat(1, n)])
