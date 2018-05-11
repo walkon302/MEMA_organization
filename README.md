@@ -23,12 +23,12 @@ analysis.
 This automation can be intergrated into MEMA analysis pipeline or be used
 individually to access the cellular organization patterns in other experiments.  
 
-### Use case 1: For the MEMA experiments
+## Use case 1: For the MEMA experiments
 After applying this method, the MEMA images are classified into different
 organization patterns. We can then use this information to study which
 microenvironmental components play important roles in cellular organization.  
 
-### Use case 2: For other experiments
+## Use case 2: For other experiments
 After applying this method, we will be able to quicktly quantify the ratio of
 organization patterns in the experiment.  
 
@@ -36,11 +36,11 @@ organization patterns in the experiment.
 
 * Open terminal, the following procedures are all in the terminal
 
-#### Install Anaconda
+## Install Anaconda
 * install anaconda https://repo.anaconda.com/archive/Anaconda2-5.1.0-MacOSX-x86_64.pkg  
 -- install the anaconda  
 
-#### Type in the following commands in the terminal directly
+## Type in the following commands in the terminal directly
 * conda create -n mema python=2.7 anaconda  
 -- create a new virtual environment called mema for running the script without
 altering the original system  
@@ -54,14 +54,14 @@ altering the original system
 * pip install grpcio==1.9.1 https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-1.6.0-py2-none-any.whl  
 -- install proper version of tensorflow  
 
-#### Ready for using the script
+## Download the script
 * Download the script from
 https://github.com/walkon302/MEMA_organization/archive/master.zip  
 -- download the file and unzip it on the desktop. Rename it for a shorter
 name, e.g., 'mema' since the original name 'MEMA_organization-master' is too
 long.  
 
-#### Type in the commands in the terminal directly
+## Type in the commands in the terminal directly
 * cd ./desktop/mema  
 -- enter the main folder of the script  
 
@@ -79,30 +79,43 @@ long.
 -- generate five folders, two for training, two for evaluation, the last one is
 for new images that need to be classified.  
 
-#### Then move images and model into this mema folder
+## Then move images and model into this mema folder
 * Put images into those five folders accordingly.  
 * Put the images that need to be classified into predict folder.  
 * If there is pre-trained model, put that model in the mema folder.
 
-#### Type in the commands
+## Type in the commands
 * cd..  
 -- go back to main folder, mema  
 
 * cd src  
 -- enter src folder  
 
-
-#### Ready to use, type in the commands.
+## Ready to use, type in the commands.
+### For training the model with new sets of data.
 * python main.py train 10000
 -- Train the model with images from train_organized and train_disorganized
 folders for 10000 iterations.  
 -- The number of iterations, 10000, can be changed.  
 
+### For evaluating the accuracy of the model.
 * python main.py eval  
 -- Evaluate the performance.  
 
-* pyton main.py predict result  
+### For classifying the new set of images.
+* python main.py predict result  
 -- Classify the images in the predict folder and output a file named result in
 the output folder.  
 -- The name of the output file, result, can be changed. The default name is
 output.  
+
+# The trained model
+Once executing the command for training the model, a new folder named MEMA_model
+will be generated. This folder contains the model with several files and several
+versions if train multiple times. Except the latest model, other older models
+can be deleted to save some storage room.  
+Make sure the model contains files as below:  
+* model.ckpt-10120.data-00000-of-00001 (The latesed iteration number)
+* model.ckpt-10120.index
+* model.ckpt-10120.meta
+* checkpoint
