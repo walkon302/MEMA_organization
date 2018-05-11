@@ -6,7 +6,22 @@ import os
 tf.logging.set_verbosity(tf.logging.INFO)
 
 def cnn_model_fn(features, labels, mode):
-    """Model function for CNN."""
+    '''
+    Model function for CNN.
+
+    Parameters:
+    -----------
+    features: numpy array
+        The pixels of images.
+    labels: numpy array
+        The labels of images.
+    mode: str
+        The mode for using the CNN model.
+
+    Returns:
+    --------
+    A valid EstimatorSpec object.
+    '''
   # Input Layer
     input_layer = tf.reshape(features["x"], [-1, 128, 128, 1])
 
@@ -74,7 +89,18 @@ def cnn_model_fn(features, labels, mode):
       mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
 def train_model(train_sample, train_label, training_step):
+    '''
+    The model for CNN training.
 
+    Parameters:
+    -----------
+    train_sample: numpy array
+        A numpy array containing image information of training data.
+    train_label: numpy array
+        A numpy array containing labels of training data.
+    training_step: int
+        The number of iterations for CNN training.
+    '''
     tensors_to_log = {"probabilities": "softmax_tensor"}
     logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log,
                                               every_n_iter=10)
@@ -96,7 +122,21 @@ def train_model(train_sample, train_label, training_step):
         hooks=[logging_hook])
 
 def eval_model(eval_sample, eval_label):
+    '''
+    The model for CNN evaluation.
 
+    Parameters:
+    -----------
+    eval_sample: numpy array
+        A numpy array containing image information of testing data.
+    eval_label: numpy array
+        A numpy array containing labels of testing data.
+
+    Returns:
+    --------
+    result: dict
+        A result of evaluation.
+    '''
     mema_classifier = tf.estimator.Estimator(
         model_fn=cnn_model_fn,
         model_dir="/Users/Walkon302/Desktop/MEMA_organization/MEMA_model")
@@ -107,10 +147,25 @@ def eval_model(eval_sample, eval_label):
         num_epochs=10,
         shuffle=False)
 
-    return mema_classifier.evaluate(input_fn=eval_input_fn)
+    result = mema_classifier.evaluate(input_fn=eval_input_fn)
+
+    return result
 
 def pred_model(pred_sample):
+    '''
+    The model for CNN prediction.
 
+    Parameters:
+    -----------
+    pred_sample: numpy array
+        A numpy array containing image information of data needs to be
+        predicted.
+
+    Returns:
+    --------
+    result: dict
+        The result of prediction.
+    '''
     mema_classifier = tf.estimator.Estimator(
         model_fn=cnn_model_fn,
         model_dir="/Users/Walkon302/Desktop/MEMA_organization/MEMA_model")
@@ -120,9 +175,21 @@ def pred_model(pred_sample):
         num_epochs=1,
         shuffle=False)
 
-    return mema_classifier.predict(input_fn=pred_input_fn)
+    result = mema_classifier.predict(input_fn=pred_input_fn)
 
-def prediction(prediction, file_name):
+    return result
+
+def prediction(prediction, file_name, output_name='output'):
+    '''
+    The process of image classification.
+
+    Parameters:
+    -----------
+    prediction: dict
+        A dict generated from pred_model, containing result of prediction.
+    file_name: numpy array
+        A numpy array containing file name for each image.
+    '''
     result = []
     for pred, name in zip(prediction, file_name):
         if pred['classes'] == 0:
@@ -135,7 +202,7 @@ def prediction(prediction, file_name):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    output_file = '{}/output.csv'.format(directory)
+    output_file = '{}/{}.csv'.format(directory, output_name)
 
     with open(output_file, "w") as output:
         writer = csv.writer(output, lineterminator='\n')

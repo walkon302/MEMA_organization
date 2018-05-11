@@ -10,12 +10,10 @@ class ImagePreProcess(object):
     '''
     Collections of methods for preprocessing the images.
     '''
-
     @staticmethod
     def image_bw(old_image_folder='ori_organized',
                  new_image_folder='bw',
                  file_type='png'):
-
         """
         Load old RGB image and convert it to black and white.
 
@@ -32,7 +30,6 @@ class ImagePreProcess(object):
         -------
         Generate new folders containing black and white images.
         """
-
         curdir = os.path.dirname(os.getcwd())
 
         directory = '{}/input/{}_{}'.format(curdir,
@@ -57,7 +54,6 @@ class ImagePreProcess(object):
                      new_image_folder='resize',
                      canvas_size=300,
                      file_type='png'):
-
         """
         Resize the canvas of old_image_path and store the new image in
         new_image_path. Center the image on the new canvas.
@@ -77,7 +73,6 @@ class ImagePreProcess(object):
         --------
             Generate new folders containing resized images.
         """
-
         curdir = os.path.dirname(os.getcwd())
 
         directory = '{}/input/{}_{}'.format(curdir,
@@ -123,7 +118,6 @@ class ImageAugmentation(object):
     Collections of methods for converting images into numpy array and
     augmenting the training images.
     '''
-
     @staticmethod
     def image_to_array(image_file_list):
         '''
@@ -139,7 +133,6 @@ class ImageAugmentation(object):
         image_array: numpy array
             A numpy array containing image information.
         '''
-
         image_array = np.array([cv2.imread(file_name, 0)
                         for file_name in image_file_list])
 
@@ -287,7 +280,7 @@ class CNNDataPreProcess(object):
         Returns:
         --------
         image_array_aug_resize: numpy array
-            A numpy array containing information that are augmented and resize
+            A numpy array containing information that are augmented and resized
             to 128x128.
         '''
         file_list = CNNDataPreProcess.get_file_list(folder)
@@ -301,6 +294,16 @@ class CNNDataPreProcess(object):
     def normal_prepared(folder):
         '''
         A method for processing training data without augmentation.
+
+        Parameters:
+        -----------
+        folder: str
+            The name of the targeted folder (where testing data belongs)
+
+        Returns:
+        --------
+        image_array_resize: numpy array
+            A numpy array containing information that are resized to 128x128.
         '''
         file_list = CNNDataPreProcess.get_file_list(folder)
         image_array = ImageAugmentation.image_to_array(file_list)
@@ -309,16 +312,49 @@ class CNNDataPreProcess(object):
         return image_array_resize
 
     @staticmethod
-    def cnn_preprocess(np_array):
-        np_array = np.array(np_array/255., dtype = 'float32')
-        np_array = np_array.reshape([len(np_array),
-                                    np_array.shape[1]*np_array.shape[2]])
+    def cnn_preprocess(image_array):
+        '''
+        Rescale the pixel intensity to 0-1 for CNN model.
 
-        return np_array
+        Parameters:
+        -----------
+        image_array: numpy array
+            A numpy array containing image information.
+
+        Returns:
+        image_array: numpy array
+            A numpy array containing image information that pixel intensities
+            are scaled to 0-1.
+        '''
+        image_array = np.array(image_array/255., dtype = 'float32')
+        image_array = image_array.reshape([len(image_array),
+                                    image_array.shape[1]*image_array.shape[2]])
+
+        return image_array
 
     @staticmethod
     def data_generate(pos, neg):
+        '''
+        A process to combine two patterns of image data and generate data as
+        numpy array and labels.
 
+        Parameters:
+        -----------
+        pos: numpy_array
+            A numpy array containing image information from pattern one folder
+            (e.g., organized).
+        neg: numpy_array
+            A numpy array containing image information from pattern two folder
+            (e.g., disorganized).
+
+        Returns:
+        --------
+        train_sample: numpy array
+            A numpy array containing shuffled image information from two
+            training data folders.
+        train_label: numpy array
+            A numpy array containing labels of train_sample.
+        '''
         train_sample = np.concatenate([pos, neg])
         train_label = np.concatenate([np.repeat(0, len(pos)),
                                       np.repeat(1, len(neg))])
@@ -333,7 +369,27 @@ class CNNDataPreProcess(object):
     def train_eval_prep(folder_1='ori_organized',
                         folder_2='ori_disorganized',
                         mode='train'):
+        '''
+        The process of preparation for training or testing data.
 
+        Parameters:
+        -----------
+        folder_1: str
+            The name of targeted folder one.
+        folder_2: str
+            The name of targeted forder two.
+        mode: str
+            The mode of this preparation. train will use augmentation, and eval
+            will not.
+
+        Returns:
+        --------
+        sample: numpy array
+            A numpy array containing image information that are prepared for
+            CNN.
+        label: numpy array
+            A numpy array containing labels of sample.
+        '''
         ImagePreProcess.image_bw(old_image_folder = folder_1)
         ImagePreProcess.image_bw(old_image_folder = folder_2)
         ImagePreProcess.image_resize(
@@ -351,7 +407,7 @@ class CNNDataPreProcess(object):
             bad = (
             CNNDataPreProcess.augmented_prepared('resize_bw_{}'.format(folder_2))
             )
-        else:
+        elif mode == 'eval':
 
             good = (
             CNNDataPreProcess.normal_prepared('resize_bw_{}'.format(folder_1))
@@ -369,7 +425,21 @@ class CNNDataPreProcess(object):
 
     @staticmethod
     def predict_prep(folder='predict'):
+        '''
+        The process of preparation for data that needs to be classified.
 
+        Parameters:
+        -----------
+        folder: str
+            The name of targeted folder, e.g., 'predict'.
+
+        Returns:
+        image_array_resize: numpy array
+            A numpy array containing image information of data that needs to
+            be classified.
+        file_name: numpy array
+            A numpy array containing file name of each images.
+        '''
         ImagePreProcess.image_bw(old_image_folder=folder)
         ImagePreProcess.image_resize(old_image_folder='bw_predict')
 

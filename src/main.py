@@ -5,6 +5,7 @@ import sys, os
 def main():
     mode = sys.argv[1]
     if mode == 'predict':
+        output_name = sys.argv[2]
         print '---------------------------------------------'
         print 'Predicting new images'
         print '---------------------------------------------'
@@ -13,7 +14,7 @@ def main():
         pred_pre = dp.CNNDataPreProcess.cnn_preprocess(pred_array)
         pred_result = model.pred_model(pred_pre)
 
-        model.prediction(pred_result, pred_file)
+        model.prediction(pred_result, pred_file, output_name)
 
     else:
 
