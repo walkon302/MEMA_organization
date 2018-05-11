@@ -12,8 +12,8 @@ class ImagePreProcess(object):
     '''
     @staticmethod
     def image_bw(old_image_folder='ori_organized',
-                 new_image_folder='bw',
-                 file_type='png'):
+                 new_image_folder='bw'
+                 ):
         """
         Load old RGB image and convert it to black and white.
 
@@ -23,8 +23,6 @@ class ImagePreProcess(object):
             The name of folder containing training image.
         new_image_folder: str
             The name of folder for processed images.
-        file_type: str
-            The output file type
 
         Return:
         -------
@@ -45,15 +43,13 @@ class ImagePreProcess(object):
         for file_name in filelist:
             im = Image.open(file_name)
             im_bw = im.convert('1')
-            im_bw.save('{}/bw_{}'.format(directory,
-                                         os.path.basename(file_name)),
-                                         file_type)
+            im_bw.save('{}/bw_{}'.format(directory,os.path.basename(file_name)))
 
     @staticmethod
     def image_resize(old_image_folder='bw_ori_organized',
                      new_image_folder='resize',
-                     canvas_size=300,
-                     file_type='png'):
+                     canvas_size=300
+                     ):
         """
         Resize the canvas of old_image_path and store the new image in
         new_image_path. Center the image on the new canvas.
@@ -66,8 +62,6 @@ class ImagePreProcess(object):
             The name of folder for processed images.
         canvas_size: int
             The pixel size of canvas.
-        file_type: str
-            The output file type
 
         Returns:
         --------
@@ -110,8 +104,7 @@ class ImagePreProcess(object):
                                   new_background)
             new_image.paste(im, (x1, y1, x1 + old_width, y1 + old_height))
             new_image.save('{}/resize_{}'.format(directory,
-                                                 os.path.basename(file_name)),
-                                                 file_type)
+                                                 os.path.basename(file_name)))
 
 class ImageAugmentation(object):
     '''

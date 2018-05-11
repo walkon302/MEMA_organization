@@ -106,8 +106,7 @@ folders for 10000 iterations.
 * python main.py predict result  
 -- Classify the images in the predict folder and output a file named result in
 the output folder.  
--- The name of the output file, result, can be changed. The default name is
-output.  
+-- The name of the output file, result, can be changed.  
 
 # The trained model
 Once executing the command for training the model, a new folder named MEMA_model

@@ -179,7 +179,7 @@ def pred_model(pred_sample):
 
     return result
 
-def prediction(prediction, file_name, output_name='output'):
+def prediction(prediction, file_name, output_name):
     '''
     The process of image classification.
 
