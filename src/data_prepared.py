@@ -6,7 +6,7 @@ from PIL import Image
 import math
 from sklearn.utils import shuffle
 
-class ImagePreprocess(object):
+class ImagePreProcess(object):
     '''
     Collections of methods for preprocessing the images.
     '''
@@ -118,7 +118,7 @@ class ImagePreprocess(object):
                                                  os.path.basename(file_name)),
                                                  file_type)
 
-class ImageAugementation(object):
+class ImageAugmentation(object):
     '''
     Collections of methods for converting images into numpy array and
     augmenting the training images.
@@ -147,6 +147,21 @@ class ImageAugementation(object):
 
     @staticmethod
     def image_rotation(image_array, degree=90):
+        '''
+        Rotate image array.
+
+        Parameters:
+        -----------
+        image_array: numpy array
+            A numpy array containing image information.
+        degree: int
+            The degree of image rotation.
+
+        Returns:
+        --------
+        result: numpy array
+            A numpy array containing rotated image information.
+        '''
         result = []
         rows, cols = image_array[0].shape
         for image in image_array:
@@ -155,38 +170,104 @@ class ImageAugementation(object):
             image_modified = cv2.warpAffine(image, r_m,
                                             (cols, rows))
             result.append(image_modified)
-        return np.array(result)
+
+        result = np.array(result)
+
+        return result
 
     @staticmethod
     def image_flip(image_array):
+        '''
+        Flip the image vertically and horizontally.
+
+        Parameters:
+        -----------
+        image_array: numpy array
+            A numpy array containing image information.
+
+        Returns:
+        --------
+        result: numpy array
+            A numpy array containing flipped image information.
+        '''
         result = []
         for image in image_array:
             x_flip = cv2.flip(image, 0)
             y_flip = cv2.flip(image, 1)
             result.append(x_flip)
             result.append(y_flip)
-        return np.array(result)
+
+        result = np.array(result)
+
+        return result
 
     @staticmethod
-    def image_resize(image_array):
+    def cnn_image_resize(image_array):
+        '''
+        Resize image array to 128x128 for CNN.
+
+        Parameters:
+        -----------
+        image_array: numpy array
+            A numpy array containing image information.
+
+        Returns:
+        --------
+        result: numpy array
+            A numpy array containing image information that is 128x128 size.
+        '''
         result = []
         dim = (128, 128)
         for image in image_array:
             resized = cv2.resize(image, dim,
                                  interpolation=cv2.INTER_AREA)
             result.append(resized)
-        return np.array(result)
+
+        result = np.array(result)
+
+        return result
 
     @staticmethod
     def image_augmentation(image_array):
-        flip = ImageAugementation.image_flip(image_array)
-        rotation = ImageAugementation.image_rotation(image_array)
-        return np.concatenate([image_array, flip, rotation])
+        '''
+        The process of image augmentation.
 
-class DataPreProcess(object):
+        Parameters:
+        -----------
+        image_array: numpy array
+            A numpy array containing image information.
 
+        Returns:
+        --------
+        result: numpy array
+            A numpy array containing information combining all augmented
+            images.
+        '''
+        flip = ImageAugmentation.image_flip(image_array)
+        rotation = ImageAugmentation.image_rotation(image_array)
+
+        result = np.concatenate([image_array, flip, rotation])
+
+        return result
+
+class CNNDataPreProcess(object):
+    '''
+    A collections of methods for preprocessing data for CNN model.
+    '''
     @staticmethod
     def get_file_list(folder):
+        '''
+        A method for getting the list of files in the targeted folder.
+
+        Parameters:
+        -----------
+        folder: str
+            The name of the targeted folder
+
+        Returns:
+        file_list: list
+            A list of paths of files in the targeted folder.
+        '''
         cur_path = '{}/input'.format(os.path.dirname(os.getcwd()))
         work_path = '{}/{}'.format(cur_path, folder)
         file_list = glob.glob('{}/*'.format(work_path))
@@ -195,28 +276,44 @@ class DataPreProcess(object):
 
     @staticmethod
     def augmented_prepared(folder):
+        '''
+        A method for processing training data, which need to be augmented.
 
-        file_list = DataPreProcess.get_file_list(folder)
-        image_array = ImageAugementation.image_to_array(file_list)
-        image_array_aug = ImageAugementation.image_augmentation(image_array)
-        image_array_aug_resize = ImageAugementation.image_resize(image_array_aug)
+        Parameters:
+        -----------
+        folder: str
+            The name of the targeted folder (where training data belongs)
+
+        Returns:
+        --------
+        image_array_aug_resize: numpy array
+            A numpy array containing information that are augmented and resize
+            to 128x128.
+        '''
+        file_list = CNNDataPreProcess.get_file_list(folder)
+        image_array = ImageAugmentation.image_to_array(file_list)
+        image_array_aug = ImageAugmentation.image_augmentation(image_array)
+        image_array_aug_resize = ImageAugmentation.cnn_image_resize(image_array_aug)
 
         return image_array_aug_resize
 
     @staticmethod
     def normal_prepared(folder):
-
-        file_list = DataPreProcess.get_file_list(folder)
-        image_array = ImageAugementation.image_to_array(file_list)
-        image_array_resize = ImageAugementation.image_resize(image_array)
+        '''
+        A method for processing training data without augmentation.
+        '''
+        file_list = CNNDataPreProcess.get_file_list(folder)
+        image_array = ImageAugmentation.image_to_array(file_list)
+        image_array_resize = ImageAugmentation.cnn_image_resize(image_array)
 
         return image_array_resize
 
     @staticmethod
-    def preprocess(np_array):
+    def cnn_preprocess(np_array):
         np_array = np.array(np_array/255., dtype = 'float32')
         np_array = np_array.reshape([len(np_array),
                                     np_array.shape[1]*np_array.shape[2]])
+
         return np_array
 
     @staticmethod
@@ -237,53 +334,54 @@ class DataPreProcess(object):
                         folder_2='ori_disorganized',
                         mode='train'):
 
-        ImagePreprocess.image_bw(old_image_folder = folder_1)
-        ImagePreprocess.image_bw(old_image_folder = folder_2)
-        ImagePreprocess.image_resize(
+        ImagePreProcess.image_bw(old_image_folder = folder_1)
+        ImagePreProcess.image_bw(old_image_folder = folder_2)
+        ImagePreProcess.image_resize(
         old_image_folder='bw_{}'.format(folder_1)
         )
-        ImagePreprocess.image_resize(
+        ImagePreProcess.image_resize(
         old_image_folder='bw_{}'.format(folder_2)
         )
 
         if mode == 'train':
 
             good = (
-            DataPreProcess.augmented_prepared('resize_bw_{}'.format(folder_1))
+            CNNDataPreProcess.augmented_prepared('resize_bw_{}'.format(folder_1))
             )
             bad = (
-            DataPreProcess.augmented_prepared('resize_bw_{}'.format(folder_2))
+            CNNDataPreProcess.augmented_prepared('resize_bw_{}'.format(folder_2))
             )
         else:
 
             good = (
-            DataPreProcess.normal_prepared('resize_bw_{}'.format(folder_1))
+            CNNDataPreProcess.normal_prepared('resize_bw_{}'.format(folder_1))
             )
             bad = (
-            DataPreProcess.normal_prepared('resize_bw_{}'.format(folder_2))
+            CNNDataPreProcess.normal_prepared('resize_bw_{}'.format(folder_2))
             )
 
-        good_array = DataPreProcess.preprocess(good)
-        bad_array = DataPreProcess.preprocess(bad)
+        good_array = CNNDataPreProcess.cnn_preprocess(good)
+        bad_array = CNNDataPreProcess.cnn_preprocess(bad)
 
-        sample, label = DataPreProcess.data_generate(good_array, bad_array)
+        sample, label = CNNDataPreProcess.data_generate(good_array, bad_array)
 
         return sample, label
 
     @staticmethod
     def predict_prep(folder='predict'):
 
-        ImagePreprocess.image_bw(old_image_folder=folder)
-        ImagePreprocess.image_resize(old_image_folder='bw_predict')
+        ImagePreProcess.image_bw(old_image_folder=folder)
+        ImagePreProcess.image_resize(old_image_folder='bw_predict')
 
         image_array_resize = (
-        DataPreProcess.normal_prepared('resize_bw_{}'.format(folder))
+        CNNDataPreProcess.normal_prepared('resize_bw_{}'.format(folder))
         )
 
-        ImageAugementation.image_resize(image_array)
+        file_list = CNNDataPreProcess.get_file_list(folder)
 
         file_name = []
         for f in file_list:
             file_name.append(os.path.basename(f))
         file_name = np.array(file_name)
+
         return image_array_resize, file_name

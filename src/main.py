@@ -9,8 +9,8 @@ def main():
         print 'Predicting new images'
         print '---------------------------------------------'
 
-        pred_array, pred_file = dp.DataPreProcess.predict_prep('predict')
-        pred_pre = dp.DataPreProcess.preprocess(pred_array)
+        pred_array, pred_file = dp.CNNDataPreProcess.predict_prep('predict')
+        pred_pre = dp.CNNDataPreProcess.cnn_preprocess(pred_array)
         pred_result = model.pred_model(pred_pre)
 
         model.prediction(pred_result, pred_file)
@@ -25,7 +25,7 @@ def main():
             training_step = int(sys.argv[2])
 
             train_sample, train_label = (
-            dp.DataPreProcess.train_eval_prep('train_organized',
+            dp.CNNDataPreProcess.train_eval_prep('train_organized',
                                               'train_disorganized',
                                               'train')
             )
@@ -39,7 +39,7 @@ def main():
         if mode == 'eval':
 
             eval_sample, eval_label = (
-            dp.DataPreProcess.train_eval_prep('eval_organized',
+            dp.CNNDataPreProcess.train_eval_prep('eval_organized',
                                               'eval_disorganized',
                                               'eval')
             )
