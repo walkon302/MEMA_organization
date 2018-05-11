@@ -1,5 +1,6 @@
 # MEMA_organization
-Authors: Chun-Han Lin, Tiina Jokela  
+Script: Chun-Han Lin
+Data collection: Tiina Jokela
 Email: walkon302@gmail.com  
 Last Update: 5/9/2018    
 
@@ -54,7 +55,8 @@ altering the original system
 -- install proper version of tensorflow  
 
 #### Ready for using the script
-* https://github.com/walkon302/MEMA_organization/archive/master.zip  
+* Download the script from
+https://github.com/walkon302/MEMA_organization/archive/master.zip  
 -- download the file and unzip it on the desktop. Rename it for a shorter
 name, e.g., 'mema' since the original name 'MEMA_organization-master' is too
 long.  
