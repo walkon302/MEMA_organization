@@ -1,8 +1,8 @@
 # MEMA_organization
-Script: Chun-Han Lin
-Data collection: Tiina Jokela
+Script: Chun-Han Lin  
+Data collection: Tiina Jokela  
 Email: walkon302@gmail.com  
-Last Update: 5/9/2018    
+Last Update: 5/9/2018  
 
 # Purpose and the use cases
 
