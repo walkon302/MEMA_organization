@@ -125,3 +125,5 @@ Make sure the model contains files as below:
 * model.ckpt-10120.index
 * model.ckpt-10120.meta
 * checkpoint
+
+# More information in the design doc.
