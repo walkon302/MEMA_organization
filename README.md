@@ -93,26 +93,33 @@ for new images that need to be classified.
 
 ## Ready to use, type in the commands.
 ### For training the model with new sets of data.
-* python main.py train 10000
--- Train the model with images from train_organized and train_disorganized
-folders for 10000 iterations.  
--- The number of iterations, 10000, can be changed.  
+* python main.py train 10000 MEMA_model  
+-- (python main.py train, iter_n, model_name)  
+-- Train the model, named 'MEMA_model' with images from train_organized and
+train_disorganized folders for 10000 iterations.   
+-- The number of iterations, '10000', can be changed.  
+-- The model name, 'MEMA_model', can be changed.
 
 ### For evaluating the accuracy of the model.
-* python main.py eval  
+* python main.py eval MEMA_model  
+-- (python main.py eval model_name)  
 -- Evaluate the performance.  
+-- The name of model, 'MEMA_model', can be changed.
 
 ### For classifying the new set of images.
-* python main.py predict result  
+* python main.py predict result MEMA_model  
+-- (python main.py predict output_file_name, model_name)  
 -- Classify the images in the predict folder and output a file named result in
 the output folder.  
--- The name of the output file, result, can be changed.  
+-- The name of the output file, 'result', can be changed.  
+-- The name of model, 'MEMA_model', can be changed.
 
 # The trained model
 Once executing the command for training the model, a new folder named MEMA_model
-will be generated. This folder contains the model with several files and several
-versions if train multiple times. Except the latest model, other older models
-can be deleted to save some storage room.  
+(or whatever name given for the model) will be generated. This folder contains
+the model with several files and several versions if train multiple times.
+Except the latest model, other older models can be deleted to save some storage
+room.  
 Make sure the model contains files as below:  
 * model.ckpt-10120.data-00000-of-00001 (The latesed iteration number)
 * model.ckpt-10120.index

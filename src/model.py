@@ -88,7 +88,7 @@ def cnn_model_fn(features, labels, mode):
     return tf.estimator.EstimatorSpec(
       mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
-def train_model(train_sample, train_label, training_step):
+def train_model(train_sample, train_label, training_step, model_name):
     '''
     The model for CNN training.
 
@@ -105,9 +105,16 @@ def train_model(train_sample, train_label, training_step):
     logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log,
                                               every_n_iter=10)
 
+    curdir = os.path.dirname(os.getcwd())
+
+    directory = '{}/{}'.format(curdir, model_name)
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
     mema_classifier = tf.estimator.Estimator(
         model_fn=cnn_model_fn,
-        model_dir="/Users/Walkon302/Desktop/MEMA_organization/MEMA_model")
+        model_dir=directory)
 
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": train_sample},
@@ -121,7 +128,7 @@ def train_model(train_sample, train_label, training_step):
         steps=training_step,
         hooks=[logging_hook])
 
-def eval_model(eval_sample, eval_label):
+def eval_model(eval_sample, eval_label, model_name):
     '''
     The model for CNN evaluation.
 
@@ -137,9 +144,14 @@ def eval_model(eval_sample, eval_label):
     result: dict
         A result of evaluation.
     '''
+
+    curdir = os.path.dirname(os.getcwd())
+
+    directory = '{}/{}'.format(curdir, model_name)
+
     mema_classifier = tf.estimator.Estimator(
         model_fn=cnn_model_fn,
-        model_dir="/Users/Walkon302/Desktop/MEMA_organization/MEMA_model")
+        model_dir=directory)
 
     eval_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": eval_sample},
@@ -151,7 +163,7 @@ def eval_model(eval_sample, eval_label):
 
     return result
 
-def pred_model(pred_sample):
+def pred_model(pred_sample, model_name):
     '''
     The model for CNN prediction.
 
@@ -166,9 +178,14 @@ def pred_model(pred_sample):
     result: dict
         The result of prediction.
     '''
+
+    curdir = os.path.dirname(os.getcwd())
+
+    directory = '{}/{}'.format(curdir, model_name)
+
     mema_classifier = tf.estimator.Estimator(
         model_fn=cnn_model_fn,
-        model_dir="/Users/Walkon302/Desktop/MEMA_organization/MEMA_model")
+        model_dir=directory)
 
     pred_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": pred_sample},

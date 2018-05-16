@@ -6,13 +6,15 @@ def main():
     mode = sys.argv[1]
     if mode == 'predict':
         output_name = sys.argv[2]
+        model_name = sys.argv[3]
+
         print '---------------------------------------------'
         print 'Predicting new images'
         print '---------------------------------------------'
 
         pred_array, pred_file = dp.CNNDataPreProcess.predict_prep('predict')
         pred_pre = dp.CNNDataPreProcess.cnn_preprocess(pred_array)
-        pred_result = model.pred_model(pred_pre)
+        pred_result = model.pred_model(pred_pre, model_name)
 
         model.prediction(pred_result, pred_file, output_name)
 
@@ -24,6 +26,7 @@ def main():
 
         if mode == 'train':
             training_step = int(sys.argv[2])
+            model_name = sys.argv[3]
 
             train_sample, train_label = (
             dp.CNNDataPreProcess.train_eval_prep('train_organized',
@@ -35,9 +38,13 @@ def main():
             print 'Train model'
             print '---------------------------------------------'
 
-            model.train_model(train_sample, train_label, training_step)
+            model.train_model(train_sample,
+                              train_label,
+                              training_step,
+                              model_name)
 
         if mode == 'eval':
+            model_name = sys.argv[2]
 
             eval_sample, eval_label = (
             dp.CNNDataPreProcess.train_eval_prep('eval_organized',
@@ -52,7 +59,7 @@ def main():
             print 'Evaluation Accuracy'
             print '---------------------------------------------'
 
-            print model.eval_model(eval_sample, eval_label)
+            print model.eval_model(eval_sample, eval_label, model_name)
 
 if __name__ == '__main__':
     main()
